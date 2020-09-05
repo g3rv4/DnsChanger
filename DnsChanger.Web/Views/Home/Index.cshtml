@@ -1,0 +1,9 @@
+﻿@model DnsChanger.Web.Models.IndexModel
+
+<div>
+    <p>Ip: @Model.Ip</p>
+    @foreach (var device in @Model.Devices)
+    {
+        <p>@device.Device.Name: @device.IsRedirected. <a href="/change?redirect=true&ip=@device.Device.Ip">Redirect</a> - <a href="/change?redirect=false&ip=@device.Device.Ip">Stop redirect</a></p>
+    }
+</div>
