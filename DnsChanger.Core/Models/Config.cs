@@ -7,6 +7,7 @@ namespace DnsChanger.Core.Models
         public Gateway Gateway { get; private set; }
         public Device[] Devices { get; private set; }
         public string DNSToOverride { get; private set; }
+        public string HitWhenIpChanges { get; private set; }
     }
 
     public class Gateway
