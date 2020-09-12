@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -62,8 +63,15 @@ namespace DnsChanger.Web.Controllers
             {
                 await _updateEndpointClient.GetAsync(ConfigHelper.Instance.HitWhenIpChanges);
             }
-            
+
             return RedirectToAction(nameof(Index));
+        }
+
+        [Route("headers")]
+        public IActionResult Headers()
+        {
+            var headers = Request.Headers.Select(h=>h.Key+"="+h.Value);
+            return Content(String.Join(",", headers) + ",IP:" + Request.HttpContext.Connection.RemoteIpAddress);
         }
 
         private static HttpClient _updateEndpointClient = new HttpClient();
@@ -74,7 +82,7 @@ namespace DnsChanger.Web.Controllers
             {
                 return new EmptyResult();
             }
-            
+
             var currentIp = GatewayHelper.GetCurrentIp();
             if (currentIp == _lastKnownIp)
             {

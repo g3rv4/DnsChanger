@@ -29,6 +29,12 @@ namespace DnsChanger.Web
             {
                 options.ForwardedHeaders =
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+
+                if (Configuration.GetValue("IP_FORWARD_FROM_ANYONE", false))
+                {
+                    options.KnownNetworks.Clear();
+                    options.KnownProxies.Clear();
+                }
             });
         }
 
