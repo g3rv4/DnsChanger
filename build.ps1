@@ -29,7 +29,7 @@ if (Test-Path $buildPath -PathType Container) {
 $uid = sh -c 'id -u'
 $gid = sh -c 'id -g'
 
-docker run --rm -v "$($basePath):/var/src" mcr.microsoft.com/dotnet/core/sdk:3.1.401-alpine3.12 ash -c "dotnet publish -c Release /var/src/DnsChanger.Web/DnsChanger.Web.csproj -o /var/src/build && chown -R $($uid):$($gid) /var/src"
+docker run --rm -v "$($basePath):/var/src" mcr.microsoft.com/dotnet/core/sdk:3.1.402-alpine3.12 ash -c "dotnet publish -c Release /var/src/DnsChanger.Web/DnsChanger.Web.csproj -o /var/src/build && chown -R $($uid):$($gid) /var/src"
 
 mv "$($csProjPath).original" $csProjPath
 

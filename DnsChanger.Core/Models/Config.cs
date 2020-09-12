@@ -21,5 +21,15 @@ namespace DnsChanger.Core.Models
     {
         public string Name { get; private set; }
         public string Ip { get; private set; }
+
+        public Device(string name, string ip)
+        {
+            Name = name;
+            Ip = ip;
+        }
+
+        private Device()
+        {
+        }
     }
 }

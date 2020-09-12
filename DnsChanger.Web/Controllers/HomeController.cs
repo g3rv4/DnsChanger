@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DnsChanger.Core;
+using DnsChanger.Core.Models;
 using DnsChanger.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +27,9 @@ namespace DnsChanger.Web.Controllers
             {
                 builder.Add(new DeviceWitStatus(device, status.ContainsKey(device.Ip)));
             }
+
+            var currentIp = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+            builder.Add(new DeviceWitStatus(new Device($"This device ({currentIp})", currentIp), status.ContainsKey(currentIp)));
 
             var model = new IndexModel(builder.ToImmutable(), GatewayHelper.GetCurrentIp());
             return View(model);
@@ -52,12 +56,10 @@ namespace DnsChanger.Web.Controllers
             GatewayHelper.ChangeWanIp();
             if (ConfigHelper.Instance.HitWhenIpChanges.HasValue())
             {
-                var response = await _updateEndpointClient.GetAsync(ConfigHelper.Instance.HitWhenIpChanges);
-                var content = await response.Content.ReadAsStringAsync();
-                return Content(content);
+                await _updateEndpointClient.GetAsync(ConfigHelper.Instance.HitWhenIpChanges);
             }
             
-            return new EmptyResult();
+            return RedirectToAction(nameof(Index));
         }
 
         private static HttpClient _updateEndpointClient = new HttpClient();
