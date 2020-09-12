@@ -1,6 +1,10 @@
 ﻿@model DnsChanger.Web.Models.IndexModel
+<!DOCTYPE html>
 <html>
 <head>
+    <title>DnsChanger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="stylesheet" href="/bulma.min.css">
     <style>
         html, body, .cont {
@@ -13,7 +17,7 @@
     </style>
 </head>
 <body>
-<div style="width: 500px;"
+<div style="max-width: 400px;"
      class="cont container is-centered">
     <div class="columns is-flex is-vcentered is-centered cont mt-0 mb-0">
         <div class="box"
@@ -21,32 +25,20 @@
             <article class="media">
                 <div class="media-content">
                     <div class="content">
-                        <div class="columns is-vcentered">
-                            <div class="column is-8">
-                                <p class="bd-notification is-primary"><spen class="has-text-weight-bold">Ip: </spen> @Model.Ip</p>
-                            </div>
-                            <div class="column has-text-centered">
-                                <p class="bd-notification is-primary"><a href="/change-wan-ip" class="button">Change IP</a></p>
-                            </div>
-                        </div>
+                        <div class="has-text-centered mt-2 mb-2"><spen class="has-text-weight-bold">Ip: </spen> @Model.Ip</div>
+                        <div class="has-text-centered mt-2 mb-5"><a href="/change-wan-ip" class="button">Change IP</a></div>
                         @foreach (var device in Model.Devices)
                         {
-                            <div class="columns is-vcentered">
-                                <div class="column is-8">
-                                    <p class="bd-notification is-primary"><spen class="has-text-weight-bold">@device.Device.Name: </spen> @(device.IsRedirected ? "US" : "UY")</p>
-                                </div>
-                                <div class="column has-text-centered">
-                                    <p class="bd-notification is-primary">
-                                        @if (device.IsRedirected)
-                                        {
-                                            <a href="/change?redirect=false&ip=@device.Device.Ip" class="button">Change to UY</a>
-                                        }
-                                        else
-                                        {
-                                            <a href="/change?redirect=true&ip=@device.Device.Ip" class="button">Change to US</a>
-                                        }
-                                    </p>
-                                </div>
+                            <div class="has-text-centered mt-2 mb-2"><spen class="has-text-weight-bold">@device.Device.Name: </spen> @(device.IsRedirected ? "US" : "UY")</div>
+                            <div class="has-text-centered mt-2 mb-5">
+                                @if (device.IsRedirected)
+                                {
+                                    <a href="/change?redirect=false&ip=@device.Device.Ip" class="button">Change to UY</a>
+                                }
+                                else
+                                {
+                                    <a href="/change?redirect=true&ip=@device.Device.Ip" class="button">Change to US</a>
+                                }
                             </div>
                         }
                     </div>
@@ -54,13 +46,6 @@
             </article>
         </div>
     </div>
-</div>
-<div>
-    <p>Ip: @Model.Ip</p>
-    @foreach (var device in @Model.Devices)
-    {
-        <p>@device.Device.Name: @device.IsRedirected. <a href="/change?redirect=true&ip=@device.Device.Ip">Redirect</a> - <a href="/change?redirect=false&ip=@device.Device.Ip">Stop redirect</a></p>
-    }
 </div>
 </body>
 </html>

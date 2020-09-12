@@ -29,7 +29,11 @@ namespace DnsChanger.Web.Controllers
             }
 
             var currentIp = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-            builder.Add(new DeviceWitStatus(new Device($"This device ({currentIp})", currentIp), status.ContainsKey(currentIp)));
+            if (!currentIp.Contains(":"))
+            {
+                builder.Add(new DeviceWitStatus(new Device($"This device ({currentIp})", currentIp),
+                    status.ContainsKey(currentIp)));
+            }
 
             var model = new IndexModel(builder.ToImmutable(), GatewayHelper.GetCurrentIp());
             return View(model);
