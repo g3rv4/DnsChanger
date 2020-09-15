@@ -64,6 +64,7 @@ namespace DnsChanger.Web.Controllers
                 await _updateEndpointClient.GetAsync(ConfigHelper.Instance.HitWhenIpChanges);
             }
 
+            _lastKnownIp = GatewayHelper.GetCurrentIp();
             return RedirectToAction(nameof(Index));
         }
 
