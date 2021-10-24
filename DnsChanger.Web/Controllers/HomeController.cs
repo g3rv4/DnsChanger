@@ -32,7 +32,7 @@ namespace DnsChanger.Web.Controllers
             var currentIp = Request.HttpContext.Connection.RemoteIpAddress.ToString();
             if (!currentIp.Contains(":"))
             {
-                builder.Add(new DeviceWitStatus(new Device($"This device ({currentIp})", currentIp),
+                builder.Add(new DeviceWitStatus(new Device($"This device", currentIp),
                     status.ContainsKey(currentIp)));
             }
 

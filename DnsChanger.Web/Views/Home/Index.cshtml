@@ -29,7 +29,8 @@
                         <div class="has-text-centered mt-2 mb-5"><a href="/change-wan-ip" class="button">Change IP</a></div>
                         @foreach (var device in Model.Devices)
                         {
-                            <div class="has-text-centered mt-2 mb-2"><spen class="has-text-weight-bold">@device.Device.Name: </spen> @(device.IsRedirected ? "US" : "UY")</div>
+                            <div class="has-text-centered mt-2 mb-0"><spen class="has-text-weight-bold">@device.Device.Name: </spen> @(device.IsRedirected ? "US" : "UY")</div>
+                            <div class="has-text-centered mt-0 mb-2 is-size-7">(@device.Device.Ip)</div>
                             <div class="has-text-centered mt-2 mb-5">
                                 @if (device.IsRedirected)
                                 {
