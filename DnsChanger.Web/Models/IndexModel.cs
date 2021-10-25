@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using DnsChanger.Core;
 using DnsChanger.Core.Models;
 
 namespace DnsChanger.Web.Models
@@ -7,10 +8,13 @@ namespace DnsChanger.Web.Models
     {
         public string Ip { get; }
         
+        public Config Config { get; }
+        
         public ImmutableArray<DeviceWitStatus> Devices { get; }
 
         public IndexModel(ImmutableArray<DeviceWitStatus> devices, string ip)
         {
+            Config = ConfigHelper.Instance;
             Devices = devices;
             Ip = ip;
         }

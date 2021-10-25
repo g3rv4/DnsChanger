@@ -25,7 +25,8 @@
             <article class="media">
                 <div class="media-content">
                     <div class="content">
-                        <div class="has-text-centered mt-2 mb-2"><spen class="has-text-weight-bold">Ip: </spen> @Model.Ip</div>
+                        <div class="has-text-centered mt-2 mb-0"><spen class="has-text-weight-bold">Ip: </spen> @Model.Ip</div>
+                        <div class="has-text-centered mt-0 mb-2 is-size-7">(DNS: @Model.Config.DNSToOverride)</div>
                         <div class="has-text-centered mt-2 mb-5"><a href="/change-wan-ip" class="button">Change IP</a></div>
                         @foreach (var device in Model.Devices)
                         {
