@@ -1,6 +1,6 @@
 .idea/
 bin/
 obj/
-build/
+.build/
 config.json
 *.DotSettings.user

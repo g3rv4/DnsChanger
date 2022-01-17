@@ -8,21 +8,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build project
-      shell: pwsh
-      run: ./build.ps1 $env:GITHUB_RUN_NUMBER $env:GITHUB_SHA
-    - name: Push it to GitHub
-      run: curl -X PUT -u "$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}" -F package=@$PKG_PATH https://nuget.pkg.github.com/g3rv4/
-
+      with:
+        fetch-depth: 0 # get entire git tree, required for nerdbank gitversioning
     - uses: Azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     - uses: Azure/get-keyvault-secrets@v1.1
       with:
         keyvault: "ActionsBuild"
-        secrets: 'OctopusServerUrl, OctopusApiKey'
+        secrets: 'OctopusServerUrl, OctopusApiKey, NuGetEndpoint'
       id: azureSecrets
+
+    - name: Add NuGet source
+      shell: pwsh
+      run: |
+        nuget sources Add -Name MySource -Source ${{ steps.azureSecrets.outputs.NuGetEndpoint }}
+        Register-PSRepository -Name MySource -SourceLocation ${{ steps.azureSecrets.outputs.NuGetEndpoint }} -InstallationPolicy Trusted
+        Install-Module BuildScripts -Repository MySource
+    - name: Build project
+      shell: pwsh
+      run: ./build.ps1
+    - name: Push it to GitHub
+      run: |
+        dotnet nuget add source --username g3rv4 --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/g3rv4/index.json"
+        dotnet nuget push --skip-duplicate '.build/packages/*.nupkg' -k ${{ secrets.GITHUB_TOKEN }} -s GitHub
     - name: Create and deploy an Octopus release
       run: |
         dotnet tool install --global Octopus.DotNet.Cli
-        dotnet-octo create-release --project DnsChanger.Web --releaseNumber $VERSION --package dnschanger.web:$VERSION_WITHOUT_HASH --deployto Prod --server "${{ steps.azureSecrets.outputs.OctopusServerUrl }}" --apiKey "${{ steps.azureSecrets.outputs.OctopusApiKey }}" --progress
+        dotnet-octo create-release --project DnsChanger.Web --releaseNumber $VERSION --package dnschanger.web:$VERSION --deployto Prod --server "${{ steps.azureSecrets.outputs.OctopusServerUrl }}" --apiKey "${{ steps.azureSecrets.outputs.OctopusApiKey }}" --progress
