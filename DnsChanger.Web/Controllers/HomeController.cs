@@ -61,7 +61,11 @@ namespace DnsChanger.Web.Controllers
             GatewayHelper.ChangeWanIp();
             if (ConfigHelper.Instance.HitWhenIpChanges.HasValue())
             {
-                await _updateEndpointClient.GetAsync(ConfigHelper.Instance.HitWhenIpChanges);
+                var urls = ConfigHelper.Instance.HitWhenIpChanges.Split(",").Select(u => u.Trim());
+                foreach (var url in urls)
+                {
+                    await _updateEndpointClient.GetAsync(url);
+                }
             }
 
             _lastKnownIp = GatewayHelper.GetCurrentIp();
@@ -84,8 +88,16 @@ namespace DnsChanger.Web.Controllers
             }
 
             _lastKnownIp = currentIp;
-            var response = await _updateEndpointClient.GetAsync(ConfigHelper.Instance.HitWhenIpChanges);
-            var content = await response.Content.ReadAsStringAsync();
+            var urls = ConfigHelper.Instance.HitWhenIpChanges.Split(",").Select(u => u.Trim());
+            var content = "";
+            foreach (var url in urls)
+            {
+                var response = await _updateEndpointClient.GetAsync(ConfigHelper.Instance.HitWhenIpChanges);
+                content += "url: " + url + "\n";
+                content += await response.Content.ReadAsStringAsync();
+                content += "\n-----\n";
+            }
+            
             return Content(content);
         }
     }
