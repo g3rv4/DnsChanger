@@ -64,7 +64,15 @@ namespace DnsChanger.Web.Controllers
                 var urls = ConfigHelper.Instance.HitWhenIpChanges.Split(",").Select(u => u.Trim());
                 foreach (var url in urls)
                 {
-                    await _updateEndpointClient.GetAsync(url);
+                    try
+                    {
+                        var r = await _updateEndpointClient.GetAsync(url);
+                        r.EnsureSuccessStatusCode();
+                    }
+                    catch (Exception e)
+                    {
+                        return Content($"Error when trying to update the ip at {url}. It will be automatically retried in 5 minutes. Exception: {e.Message}");
+                    }
                 }
             }
 
@@ -86,18 +94,28 @@ namespace DnsChanger.Web.Controllers
             {
                 return new EmptyResult();
             }
-
-            _lastKnownIp = currentIp;
+            
             var urls = ConfigHelper.Instance.HitWhenIpChanges.Split(",").Select(u => u.Trim());
             var content = "";
             foreach (var url in urls)
             {
-                var response = await _updateEndpointClient.GetAsync(ConfigHelper.Instance.HitWhenIpChanges);
+                HttpResponseMessage response;
+                try
+                {
+                    response = await _updateEndpointClient.GetAsync(ConfigHelper.Instance.HitWhenIpChanges);
+                    response.EnsureSuccessStatusCode();
+                }
+                catch (Exception e)
+                {
+                    return Content($"Error when trying to update the ip at {url}. It will be automatically retried in 5 minutes. Exception: {e.Message}");
+                }
+
                 content += "url: " + url + "\n";
                 content += await response.Content.ReadAsStringAsync();
                 content += "\n-----\n";
             }
             
+            _lastKnownIp = currentIp;
             return Content(content);
         }
     }
